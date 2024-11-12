@@ -162,7 +162,6 @@ merger = hurricane_features.copy()
 new_data = enc.fit_transform(hurricane_features["Label"].values.reshape(-1, 1)).toarray()
 output = pd.DataFrame(new_data, columns=enc.get_feature_names_out(["Label"]))
 final = merger.join(output)
-final = final.drop(columns = "Label")
 final.head()
 
 final.to_csv("hurricane_ohe.csv", index = False, header = True)
