@@ -8,6 +8,7 @@ import seaborn as sns
 from feature_utils import get_sobel_features, get_gabor_features, generate_gabor_kernel, get_local_binary_pattern
 from functions import *
 import random
+from sklearn.preprocessing import OneHotEncoder
 
 # load in the dataset 
 
@@ -153,3 +154,15 @@ hurricane_features = pd.DataFrame(features)
 print(hurricane_features.head())
 print(f"DataFrame shape: {hurricane_features.shape}")
 hurricane_features.to_csv("hurricane_equal_labels.csv", index = False, header = True)
+
+# have one hot encoding 
+
+enc = OneHotEncoder()
+merger = hurricane_features.copy()
+new_data = enc.fit_transform(hurricane_features["Label"].values.reshape(-1, 1)).toarray()
+output = pd.DataFrame(new_data, columns=enc.get_feature_names_out(["Label"]))
+final = merger.join(output)
+final = final.drop(columns = "Label")
+final.head()
+
+final.to_csv("hurricane_ohe.csv", index = False, header = True)
