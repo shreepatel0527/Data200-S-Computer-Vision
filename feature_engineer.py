@@ -116,9 +116,17 @@ logistic_features.to_csv("socal_fires_midwest_floods.csv", header = True, index 
 
 # our random seed has been generated above, no need to repeat
 
-random_0_indeces = random.sample(list(np.where(hurricane_matthew_labels == 0)[0]), 1544)
-random_1_indeces = random.sample(list(np.where(hurricane_matthew_labels == 1)[0]), 1544)
-random_3_indeces = random.sample(list(np.where(hurricane_matthew_labels == 3)[0]), 1544)
+# to generate the entire hurricane dataset, set the label count for the longer label categories
+
+# also avoids changing most of the code 
+
+label_0_count = len(list(np.where(hurricane_matthew_labels == 0)[0]))
+label_1_count = len(list(np.where(hurricane_matthew_labels == 1)[0]))
+label_3_count = len(list(np.where(hurricane_matthew_labels == 3)[0]))
+
+random_0_indeces = random.sample(list(np.where(hurricane_matthew_labels == 0)[0]), label_0_count)
+random_1_indeces = random.sample(list(np.where(hurricane_matthew_labels == 1)[0]), label_1_count)
+random_3_indeces = random.sample(list(np.where(hurricane_matthew_labels == 3)[0]), label_3_count)
 random_2_indeces = random.sample(list(np.where(hurricane_matthew_labels == 2)[0]), 1544)
 
 sum_indeces = random_0_indeces + random_1_indeces + random_3_indeces + random_2_indeces
@@ -153,7 +161,7 @@ features= {
 hurricane_features = pd.DataFrame(features)
 print(hurricane_features.head())
 print(f"DataFrame shape: {hurricane_features.shape}")
-hurricane_features.to_csv("hurricane_equal_labels.csv", index = False, header = True)
+hurricane_features.to_csv("hurricane_unbalanced_labels.csv", index = False, header = True)
 
 # have one hot encoding 
 
@@ -164,4 +172,6 @@ output = pd.DataFrame(new_data, columns=enc.get_feature_names_out(["Label"]))
 final = merger.join(output)
 final.head()
 
-final.to_csv("hurricane_ohe.csv", index = False, header = True)
+final.to_csv("hurricane_unbal_ohe.csv", index = False, header = True)
+
+print(f"Length of full hurricane dataset: {len(hurricane_matthew_labels)}")
