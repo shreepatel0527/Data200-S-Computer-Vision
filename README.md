@@ -2,20 +2,57 @@
 
 This repository contains satellite images, helper files, and test files to build a models that can classify natural disaster images based on the type of natural disaster and the level of damage. 
 
-### Local SetUp
+## Background
 
-To set up your local environment, run `make environment` from your command line. This will load the necessary libraries and modules with Python 3.10. 
+This project involves developing a computer vision approach to assist a crisis response agency in analyzing satellite imagery for disaster management. The goal is to automate disaster type and damage level classification using data from the xView2 Challenge Dataset, which contains images labeled by damage levels (0: no damage to 3: destroyed) across various disasters (midwest-flooding, socal-fire, hurricane-matthew). The project includes exploratory data analysis (EDA) to understand dataset characteristics and extract useful features, followed by two tasks: 
+
+- (A) classifying disaster types (midwest-flooding vs. socal-fire) 
+- (B) classifying building damage levels for hurricane-matthew. 
+
+## Local SetUp
+
+To set up your local environment, run `make environment` from the command line. This will load the necessary libraries and modules with Python 3.10. 
 
 Run `unzip satellite-image-data.zip` form the command line to extract the images on your local machine before running the notebooks. The code needs to access the images to load them in directly to the CNN. 
 
-**For portability, let us avoid pushing the images folder onto the repo but keep a local copy!**
+**For portability, avoid pushing the images folder onto the repo. Keep a local copy!**
 
-### Files Contained
+## EDA and Features Analyzed
 
-The `data_utils.py` contains functions to load the dataset and visualize it. The `feature_utils.py` contains a handful of functions to define useful features from the loaded images. The `functions.py` contains functions that we have written for our feature engineering. The `feature_engineer.py` contains the functions we used to clean the dataset. At the end of the data cleaning, csv files of the dataframes are generated to pss into the modeling notebooks smoothly. The `config.json` was provided by the Data 200 staff, and it used to load in the data. 
+We turned the data into a structured format by converting the list of images to an image size, and also converting the images into red, green, and blue channels for better comparison. We also looked at a variety of other parameters to understand our data. In addition to average RGB value, we looked at Local Binary Patterns (LBP) values, Sobel edge intensity, and Gabor filter responses. LBP is a texture descriptor that encodes pixel intensity patterns into binary numbers. The Gabor kernel is a filter that detects edges. Sobel edge filtering uses convolution to detect edges by calculating intensity gradients in an image. and textures by responding to specific frequencies and orientations. 
 
-### Modeling Notebooks 
+Through these analyses, we found key distinctions between disaster types and hurricane damage levels. For instance, images from SoCal Fires exhibit higher red and green RGB values, as well as elevated Sobel edge and Gabor filter responses, suggesting sharper edges and more intricate textures. Midwest Flood images, by comparison, showed less saturation and edge intensity. Within the Hurricane Matthew dataset, severely damaged buildings (Level 3) show lower red and green values, reduced edge intensities, and increased LBP values, reflecting diminished visibility and simpler textures compared to less damaged structures (Level 1). Additionally, we found that log transformations of the color channel values were necessary to create an even distribution of the data. For values of Gabor Kernel, Sobel Edge Filtering, and Local Binary Patterns, the distributions were approximately Gaussian, so we do not need such transformations. 
 
-The modeling work is split up into two notebooks; one for each task. `task_A_model.ipynb` contains all code for prediction function definitions, plotting, and CNN for the fires and floods dataset.
+**Based on these findings, we selected red and green RGB channels, LBP, Sobel edge intensity, and Gabor filter response as predictor variables for the modeling phase.**
 
-The prediction classes and functions are the first cell in each subsection for easy access. 
+## Files Contained
+
+### `utility_scripts`
+
+The `data_utils.py` contains functions to load the dataset and visualize it. The `feature_utils.py` contains a handful of functions to define useful features from the loaded images. Both of these files were given by the Data 200 staff. The `functions.py` contains functions that we have written for our feature engineering, such as those to calculate the LBP, Gabor Kernel, and Sobel Edges. The `feature_engineer.py` contains the functions we used to clean the dataset, such as calculating the image size and generating a `.csv` file for each dataset with the features. At the end of the data cleaning, csv files of the dataframes are generated to pss into the modeling notebooks smoothly. The `config.json` was provided by the Data 200 staff, and it used to load in the data. 
+
+### `test_csv`
+
+This folder contains all of the predictions made on the test sets provided by Data 200 staff. They represent predictions done with various modeling efforts along the way. They are named by the dataset they are predicting and any key features of the model. 
+
+### `feature_eng_csv`
+
+This folder contains `.csv` files that were feature engineered from the scripts in `utility_scripts`. Each file contains the features extracted from each image and the corresponding label. In the `socal_fires_midwest_floods.csv` file, the labels are `0` for flood data and `1` for fire data. There exist 4 Hurricane Matthew datasets. Two were generated by one hot encoding the target variable, removing any influence of the magnitude of the class label on the dataset. The sampling methods also differ. In the unbalanced files, all of the data points are included, even if that creates class imbalance. In the balanced `.csv` files, the labels with more corresponding images are randomly sampled to equal the label with the smallest number of edges in occurence. 
+
+### `task_A_dep`
+
+This folder contains deprecated Jupyter notebooks containing models that were tried previously with less success. For task A, this includes trying a different CNN architecture and different principal components for PCA. 
+
+### `task_B_dep`
+
+This folder contains deprecated Jupyter notebooks containing models that were tried previously on the Hurricane Matthew dataset. This includes different principal components for PCA and a one vs rest approach to predicting multinomial data. 
+
+## Final Modeling Notebooks 
+
+The modeling work is split up into two notebooks; one for each task. `task_A_logreg_final.ipynb` contains both logistic regression models and the subsequent test set generation code. The first model is a vanilla logistic regression model with no frills added. The second is a logistic regression model with gradient descent, PCA with 3 principal components, and hyperparameter tuning implemented to augment the results. 
+
+(add information about other notebooks when they are complete)
+
+## Results and Implications
+
+(add information once other notebooks are complete)
