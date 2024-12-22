@@ -13,9 +13,7 @@ This project involves developing a computer vision approach to assist a crisis r
 
 To set up your local environment, run `make environment` from the command line. This will load the necessary libraries and modules with Python 3.10. 
 
-Run `unzip satellite-image-data.zip` form the command line to extract the images on your local machine before running the notebooks. The code needs to access the images to load them in directly to the CNN. 
-
-**For portability, avoid pushing the images folder onto the repo. Keep a local copy!**
+This repository does not include the images provided for the project (for reproducability reasons). However, those images were a subset of the xView2 Challenge Dataset, and can be found from that website. Save the images into this directory, because the CNN needs to access the images and load them directly.
 
 ## EDA and Features Analyzed
 
@@ -51,8 +49,21 @@ This folder contains deprecated Jupyter notebooks containing models that were tr
 
 The modeling work is split up into two notebooks; one for each task. `task_A_logreg_final.ipynb` contains both logistic regression models and the subsequent test set generation code. The first model is a vanilla logistic regression model with no frills added. The second is a logistic regression model with gradient descent, PCA with 3 principal components, and hyperparameter tuning implemented to augment the results. 
 
-(add information about other notebooks when they are complete)
+The same models are included in `task_B_logreg_final.ipynb`, and they are modified with focal loss function to better fit the multinomial prediction task. 
+
+`task_A_modeling_CNN.ipynb` and `task_B_modeling_CNN.ipynb` both include different CNN architectures to analyze the images directly. The images are resized upon loading to reduce computational cost, and the models are trained with different hyperparameters to achieve desirable levels of accuracy on training and validation data. 
 
 ## Results and Implications
 
-(add information once other notebooks are complete)
+The Vanilla Logistic Regression model performed effectively on the Fire/Flood dataset, achieving an F1 score of 0.91. Applying PCA, hyperparameter tuning, and k-fold cross-validation significantly improved the logistic regression model's performance on the Fire/Flood dataset, achieving an F1 score of 0.92. However, it struggled with the Hurricane Matthew dataset, failing to converge and resulting in poor accuracy scores of around 25% for training and validation. 
+
+Efforts to improve performance on this dataset with both models, including truncating the data, yielded only marginal gains, with accuracy improving to 0.46 and 0.44, respectively. However, these enhancements proved less effective for the Hurricane Matthew dataset, which continued to experience challenges due to class imbalance and overlap in feature distributions, even after synthetic data augmentation and other mitigation strategies.  
+
+The CNN demonstrated superior performance on the Fire/Flood dataset, achieving over 97% accuracy and F1 scores with minimal loss. This reflects the CNN’s ability to capture hierarchical and nonlinear features from image data. For the Hurricane Matthew dataset, despite efforts like increasing dropout for regularization and adding hidden layers, the CNN achieved only moderate success, with training accuracy of 70% and validation accuracy capping at 58%. Attempts at further data augmentation, including SMOTE, did not yield improvements. This higlights the dataset's complexity and the limitations of these techniques in this context.  
+ 
+The CNN model's ability to learn features directly from raw image data shows its potential for handling complex, nonlinear relationships compared to logistic regression models, which rely on engineered features and PCA for dimensionality reduction. However, challenges such as computational expense and the necessity of large datasets hinder the model’s scalability. While logistic regression models are less computationally intensive, they struggle with datasets like Hurricane Matthew's, where class overlap and imbalance degrades performance. 
+
+### Real World Implications
+The successful application of CNNs in disaster classification has significant implications for real-world scenarios. Their ability to rapidly process large datasets can aid in disaster response by identifying and prioritizing affected areas, enabling timely allocation of resources. However, the reliance on CNNs comes with risks, such as potential misclassifications and the "black-box" nature of predictions, which may reduce trust among stakeholders. Integrating explainability tools like Grad-CAM can mitigate these concerns by providing insights into the decision-making process, ensuring that CNNs are both effective and trustworthy in high-stakes environments.
+
+### Developed by Marie Anand, Shree Patel, and Sophia Zhang

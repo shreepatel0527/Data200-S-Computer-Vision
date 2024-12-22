@@ -1,4 +1,4 @@
-from feature_utils import get_sobel_features, get_gabor_features, generate_gabor_kernel, get_local_binary_pattern
+from utility_scripts.feature_utils import get_sobel_features, get_gabor_features, generate_gabor_kernel, get_local_binary_pattern
 import numpy as np 
 
 def img_to_imgsize(images_list):
